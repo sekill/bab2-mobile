@@ -1,0 +1,191 @@
+// 1. Implementasi Kelas Utama dan Subkelas
+
+// Kelas ProdukDigital
+class ProdukDigital {
+  String namaProduk;
+  double harga;
+  String kategori;
+
+  ProdukDigital({required this.namaProduk, required this.harga, required this.kategori});
+
+  // Metode untuk menerapkan diskon
+  double terapkanDiskon(double diskon) {
+    if (diskon < 0 || diskon > 100) {
+      throw Exception('Diskon harus antara 0 dan 100');
+    }
+    return harga - (harga * diskon / 100);
+  }
+}
+
+// Subkelas NetworkAutomation
+class NetworkAutomation extends ProdukDigital {
+  NetworkAutomation({required String namaProduk, required double harga})
+      : super(namaProduk: namaProduk, harga: harga, kategori: 'Network Automation');
+}
+
+// 2. Implementasi Karyawan
+
+// Kelas Abstrak Karyawan
+abstract class Karyawan {
+  String nama;
+  int umur;
+  String peran;
+
+  Karyawan({required this.nama, required this.umur, required this.peran});
+
+  void bekerja();
+}
+
+// Subkelas KaryawanTetap
+class KaryawanTetap extends Karyawan {
+  KaryawanTetap({required String nama, required int umur, required String peran})
+      : super(nama: nama, umur: umur, peran: peran);
+
+  @override
+  void bekerja() {
+    print('$nama bekerja dengan komitmen penuh sebagai $peran.');
+  }
+}
+
+// Subkelas KaryawanKontrak
+class KaryawanKontrak extends Karyawan {
+  KaryawanKontrak({required String nama, required int umur, required String peran})
+      : super(nama: nama, umur: umur, peran: peran);
+
+  @override
+  void bekerja() {
+    print('$nama bekerja dengan kontrak sebagai $peran.');
+  }
+}
+
+// 3. Mixin Kinerja untuk Produktivitas
+
+// Mixin Kinerja
+mixin Kinerja {
+  int produktivitas = 75;
+
+  void kenaikanProduktivitas() {
+    produktivitas += 5;
+    if (produktivitas > 100) {
+      produktivitas = 100;
+    }
+  }
+
+  // Memastikan karyawan Manager tetap memiliki produktivitas di atas 85
+  void cekProduktivitas(String peran) {
+    if (peran == 'Manager' && produktivitas < 85) {
+      produktivitas = 85;
+    }
+  }
+}
+
+// Kelas Karyawan dengan mixin Kinerja
+class KaryawanDenganKinerja with Kinerja {
+  String nama;
+  int umur;
+  String peran;
+
+  KaryawanDenganKinerja({required this.nama, required this.umur, required this.peran});
+}
+
+// 4. Enum FaseProyek untuk Konsistensi Proyek
+
+// Enum FaseProyek
+enum FaseProyek {
+  Perencanaan,
+  Pengembangan,
+  Evaluasi,
+}
+
+class Proyek {
+  FaseProyek fase;
+
+  Proyek(this.fase);
+
+  // Metode untuk memastikan transisi antar fase
+  void transisiFase(FaseProyek faseTujuan) {
+    if (fase == FaseProyek.Perencanaan && faseTujuan == FaseProyek.Pengembangan) {
+      fase = faseTujuan;
+      print('Fase proyek berpindah ke Pengembangan');
+    } else if (fase == FaseProyek.Pengembangan && faseTujuan == FaseProyek.Evaluasi) {
+      fase = faseTujuan;
+      print('Fase proyek berpindah ke Evaluasi');
+    } else {
+      print('Transisi fase tidak valid. Harus mengikuti urutan Perencanaan -> Pengembangan -> Evaluasi.');
+    }
+  }
+}
+
+// 5. Mekanisme Pembatasan Jumlah Karyawan Aktif
+
+class KaryawanAktif {
+  String nama;
+  bool aktif;
+
+  KaryawanAktif({required this.nama, this.aktif = true});
+}
+
+class Perusahaan {
+  List<KaryawanAktif> karyawanAktif = [];
+  List<KaryawanAktif> karyawanNonAktif = [];
+  final int maxKaryawanAktif = 20;
+
+  // Menambah karyawan aktif jika masih ada slot
+  void tambahKaryawan(KaryawanAktif karyawan) {
+    if (karyawanAktif.length < maxKaryawanAktif) {
+      karyawanAktif.add(karyawan);
+      print('${karyawan.nama} ditambahkan ke karyawan aktif.');
+    } else {
+      print('Tidak bisa menambah karyawan, batas maksimal tercapai.');
+    }
+  }
+
+  // Resign karyawan, ubah status jadi non-aktif
+  void resignKaryawan(KaryawanAktif karyawan) {
+    if (karyawanAktif.contains(karyawan)) {
+      karyawanAktif.remove(karyawan);
+      karyawanNonAktif.add(karyawan);
+      print('${karyawan.nama} telah resign dan sekarang non-aktif.');
+    } else {
+      print('Karyawan tidak ditemukan di daftar karyawan aktif.');
+    }
+  }
+}
+
+// 6. Tugas Tambahan: Proyek yang Mengimplementasikan Semua Indikator Pembelajaran
+
+void main() {
+  // 1. ProdukDigital dan NetworkAutomation
+  var produk1 = NetworkAutomation(namaProduk: 'Router A', harga: 500);
+  print('Harga setelah diskon: ${produk1.terapkanDiskon(10)}');
+
+  // 2. KaryawanTetap dan KaryawanKontrak
+  var karyawan1 = KaryawanTetap(nama: 'Andi', umur: 30, peran: 'Manager');
+  karyawan1.bekerja();
+
+  var karyawan2 = KaryawanKontrak(nama: 'Budi', umur: 25, peran: 'Developer');
+  karyawan2.bekerja();
+
+  // 3. Mixin Kinerja untuk Produktivitas
+  var karyawanDenganKinerja = KaryawanDenganKinerja(nama: 'Cindy', umur: 28, peran: 'Manager');
+  karyawanDenganKinerja.kenaikanProduktivitas();
+  karyawanDenganKinerja.cekProduktivitas('Manager');
+  print('Produktivitas: ${karyawanDenganKinerja.produktivitas}');
+
+  // 4. Transisi Proyek
+  var proyek = Proyek(FaseProyek.Perencanaan);
+  proyek.transisiFase(FaseProyek.Pengembangan);
+  proyek.transisiFase(FaseProyek.Evaluasi);
+
+  // 5. Pengelolaan Karyawan Aktif dan Non-Aktif
+  var perusahaan = Perusahaan();
+
+  var karyawan3 = KaryawanAktif(nama: 'Diana');
+  var karyawan4 = KaryawanAktif(nama: 'Eka');
+
+  perusahaan.tambahKaryawan(karyawan3);
+  perusahaan.tambahKaryawan(karyawan4);
+
+  perusahaan.resignKaryawan(karyawan3);
+  perusahaan.tambahKaryawan(KaryawanAktif(nama: 'Fahmi'));
+}
